@@ -4,6 +4,8 @@ const mgrid = (h, w) => {
   return [y, x];
 };
 
+const pow = ::Math.pow;
+
 const sum = m =>
   m.reduce((s, v) => s + v.reduce((_s, w) => _s + w, 0), 0);
 
@@ -16,7 +18,10 @@ const mul = (...matrices) =>
 const dev = (m, mean) =>
   m.slice().map((v, y) => v.slice().map((w, x) => w - mean));
 
+
 export default function imageMoments(image) {
+  // Expects a greyscale image matrix [y][x]
+  // @desc https://en.wikipedia.org/wiki/Image_moment
   const [y, x] = mgrid(25, 20);
   const moments = {};
 
@@ -37,6 +42,7 @@ export default function imageMoments(image) {
   moments.m30 = m(3, 0);
 
   // Centroid
+  // @desc point on which it would balance when placed on a needle
   moments.mx = moments.m01 / moments.m00; // mean
   moments.my = moments.m10 / moments.m00; // mean
   const xMoments = dev(x, moments.mx); // standard deviation
@@ -44,11 +50,10 @@ export default function imageMoments(image) {
 
   // Central moments
   // @desc translation invariant
-  // @url https://en.wikipedia.org/wiki/Image_moment#Central_moments
   const mu = (i, j) => mom(i, j, yMoments, xMoments);
   moments.mu00 = moments.m00;
-  moments.mu01 = 0; // sum((yMoments)*image) // should be 0
-  moments.mu10 = 0; // sum((xMoments)*image) // should be 0
+  // moments.mu01 = mu(0, 1) // should be 0
+  // moments.mu10 = mu(1, 0) // should be 0
   moments.mu11 = mu(1, 1);
   moments.mu20 = mu(2, 0); // variance
   moments.mu02 = mu(0, 2); // variance
@@ -60,13 +65,26 @@ export default function imageMoments(image) {
   // Scale invariants
   // @desc translation and scale invariant
   const nu = (i, j) =>
-    moments[`mu${i}${j}`] / Math.pow(moments.mu00, (1 + (i + j) / 2));
+    moments[`mu${i}${j}`] / pow(moments.mu00, (1 + (i + j) / 2));
   moments.nu11 = nu(1, 1);
   moments.nu12 = nu(1, 2);
   moments.nu21 = nu(2, 1);
+  moments.nu02 = nu(0, 2);
   moments.nu20 = nu(2, 0);
   moments.nu03 = nu(0, 3); // skewness
   moments.nu30 = nu(3, 0); // skewness
+
+  // Rotation invariants
+  // @desc translation, scale and rotation invariant
+  const {nu11, nu12, nu21, nu02, nu20, nu03, nu30} = moments;
+  moments.hu1 = moments.nu20 + moments.nu02;
+  moments.hu2 = pow(nu20 + nu02, 2) + 4 * pow(nu11, 2);
+  moments.hu3 = pow(nu30 - 3 * nu12, 2) + pow(3 * nu21 - nu03, 2);
+  moments.hu4 = pow(nu30 + nu12, 2) + pow(nu21 - nu03, 2);
+  moments.hu5 = (nu30 - 3 * nu12) * (nu30 + nu12) * (pow(nu30 + nu12, 2) - 3 * pow(nu21 + nu03, 2)) + (3 * nu21 - nu03) * (nu21 + nu03) * (3 * pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2));
+  moments.hu6 = (nu20 - nu02) * (pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2)) + 4 * nu11 * (nu30 + nu12) * (nu21 + nu03);
+  moments.hu7 = (3 * nu21 - nu03) * (nu30 + nu12) * (pow(nu30 + nu12, 2) - 3 * pow(nu21 + nu03, 2)) - (nu30 - 3 * nu12) * (nu21 + nu03) * (3 * pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2));
+  moments.hu8 = nu11 * (pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2)) - (nu20 - nu02) * (nu30 + nu12) * (nu03 + nu21);
 
   return moments;
 }

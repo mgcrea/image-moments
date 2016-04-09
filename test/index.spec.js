@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import expect from 'expect';
-import imageMoments from './../src';
+import imageMoments, {huMoments} from './../src';
 
 expect.extend({
   toApproximate(expected, precision = 10e3) {
@@ -17,8 +17,8 @@ expect.extend({
 describe('imageMoment', () => {
   // Fetch fixtures
   const sample = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/sample.json`));
-  const implementation = 'opencv';
-  const expected = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/moments/${implementation}.json`));
+  const expected = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/outputs/moments.json`));
+  const expectedHu = JSON.parse(fs.readFileSync(`${__dirname}/fixtures/outputs/huMoments.json`));
   const moments = imageMoments(sample);
 
   it('should properly compute raw moments', () => {
@@ -49,6 +49,16 @@ describe('imageMoment', () => {
       if (expected[key]) {
         expect(moments[key]).toApproximate(expected[key], 10e15);
       }
+    });
+  });
+
+  it('should properly compute hu moments', () => {
+    expect(moments).toBeA('object');
+    const rawMomentKeys = ['hu1', 'hu2', 'hu3', 'hu4', 'hu5', 'hu6', 'hu7'];
+    let i = 0;
+    rawMomentKeys.forEach(key => {
+      expect(moments[key]).toApproximate(expectedHu[i][0], 10e5);
+      i++;
     });
   });
 });
