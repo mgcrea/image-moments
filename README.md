@@ -8,15 +8,16 @@ Calculate [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javas
 
 ### Quickstart
 
-1. Fetch raw, central and scale invariant moments
+1. Fetch raw, central, scale and rotation invariant moments
 
     ```js
     import imageMoments from 'image-moments';
-    // Sample greyscale image of 3x3, 255 = white, 0 = black
-    const sample = [[255, 255, 255], [0, 255, 255], [255, 0, 255]];
-    const moments = imageMoments(sample);
+    // Sample greyscale matrix of 4x3, 255 = white, 0 = black
+    const matrix = [[255, 255, 255, 255], [0, 255, 255, 255], [255, 0, 255, 255]];
+    const moments = imageMoments(matrix);
     /*
     {
+      // Row moments
       "m00": 126735,
       "m01": 1524390,
       "m10": 1207170,
@@ -27,11 +28,11 @@ Calculate [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javas
       "m21": 188417205,
       "m03": 458373210,
       "m30": 229570380,
+      // Centroid
       "mx": 12.028169014084508,
       "my": 9.525150905432596,
+      // Central moments
       "mu00": 126735,
-      "mu01": 0,
-      "mu10": 0,
       "mu11": -31709.78873239441,
       "mu20": 4202383.581488935,
       "mu02": 6596749.436619717,
@@ -39,15 +40,32 @@ Calculate [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javas
       "mu12": 143909.71646781557,
       "mu30": -39356.39745921243,
       "mu03": -211184.61614761315,
+      // Scale moments
       "nu11": -0.0000019742411969914966,
       "nu12": 2.5167999382131884e-8,
       "nu21": 2.9501461854340094e-8,
+      "nu02": 0.0004107114876706931,
       "nu20": 0.0002616390434560192,
       "nu03": -3.693353318438072e-8,
-      "nu30": -6.8829389095344285e-9
+      "nu30": -6.8829389095344285e-9,
+      // Rotation moments
+      "hu1": 0.0006723505311267123,
+      "hu2": 4.5207082721958777e-7,
+      "hu3": 2.2522278857137367e-14,
+      "hu4": 4.747952002281406e-15,
+      "hu5": -1.1376366926279648e-30,
+      "hu6": -4.053410989495849e-20,
+      "hu7": -1.9354880656758928e-31,
+      "hu8": -2.0809356074964827e-20
     }
     */
     ```
+
+## Properties
+
+- `mu*` moments are translational invariant.
+- `nu*` moments are translational and scale invariant.
+- `hu*` moments are translational, scale and rotation invariant.
 
 ### Available scripts
 
