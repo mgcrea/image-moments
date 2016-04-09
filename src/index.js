@@ -88,3 +88,13 @@ export default function imageMoments(image) {
 
   return moments;
 }
+
+const getOrientationFromMoments = moments => {
+  const {mu00, mu11, mu02, mu20} = moments;
+  const dmu20 = mu20 / mu00;
+  const dmu02 = mu02 / mu00;
+  const dmu11 = mu11 / mu00;
+  return dmu20 !== dmu02 ? Math.atan(2 * dmu11 / (dmu20 - dmu02)) / 2 : 0;
+};
+
+export {getOrientationFromMoments};

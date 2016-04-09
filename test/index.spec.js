@@ -1,7 +1,7 @@
 
 import fs from 'fs';
 import expect from 'expect';
-import imageMoments, {huMoments} from './../src';
+import imageMoments, {getOrientationFromMoments} from './../src';
 
 expect.extend({
   toApproximate(expected, precision = 10e3) {
@@ -60,5 +60,11 @@ describe('imageMoment', () => {
       expect(moments[key]).toApproximate(expectedHu[i][0], 10e5);
       i++;
     });
+  });
+
+  it('should properly compute orientation', () => {
+    expect(moments).toBeA('object');
+    const theta = getOrientationFromMoments(moments);
+    expect(theta).toBeA('number');
   });
 });

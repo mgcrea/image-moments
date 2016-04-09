@@ -2,7 +2,9 @@
 
 [![project status](https://img.shields.io/badge/status-stable-green.svg?style=flat)](https://github.com/mgcrea/image-moments) [![license](https://img.shields.io/github/license/mgcrea/image-moments.svg?style=flat)](https://tldrlegal.com/license/mit-license) [![build status](http://img.shields.io/travis/mgcrea/image-moments/master.svg?style=flat)](http://travis-ci.org/mgcrea/image-moments) [![dependencies status](https://img.shields.io/david/mgcrea/image-moments.svg?style=flat)](https://david-dm.org/mgcrea/image-moments) [![devDependencies status](https://img.shields.io/david/dev/mgcrea/image-moments.svg?style=flat)](https://david-dm.org/mgcrea/image-moments#info=devDependencies) [![coverage status](http://img.shields.io/codeclimate/coverage/github/mgcrea/image-moments.svg?style=flat)](https://codeclimate.com/github/mgcrea/image-moments) [![climate status](https://img.shields.io/codeclimate/github/mgcrea/image-moments.svg?style=flat)](https://codeclimate.com/github/mgcrea/image-moments)
 
-Calculate [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javascript!
+Compute [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javascript!
+
+Moments are well-known for their application in image analysis, since they can be used to derive invariants with respect to specific transformation classes.
 
 ## Usage
 
@@ -15,6 +17,12 @@ Calculate [Image Moments](https://en.wikipedia.org/wiki/Image_moment) with Javas
     // Sample greyscale matrix of 4x3, 255 = white, 0 = black
     const matrix = [[255, 255, 255, 255], [0, 255, 255, 255], [255, 0, 255, 255]];
     const moments = imageMoments(matrix);
+    ```
+
+2. Get image orientation
+
+    ```js
+    const theta = getOrientationFromMoments(moments);
     ```
 
 ### Output
