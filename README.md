@@ -22,6 +22,7 @@ Moments are well-known for their application in image analysis, since they can b
 2. Get image orientation
 
     ```js
+    import {getOrientationFromMoments} from 'image-moments';
     const theta = getOrientationFromMoments(moments);
     ```
 
