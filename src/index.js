@@ -20,9 +20,11 @@ export default function imageMoments(image) {
   const [y, x] = mgrid(25, 20);
   const moments = {};
 
+  const mom = (i, j, fy, fx) =>
+    sum(mul(mul.apply(null, new Array(i).fill(fy)), mul.apply(null, new Array(j).fill(fx)), image));
+
   // Raw or spatial moments
-  const m = (i, j) =>
-    sum(mul(mul.apply(null, new Array(i).fill(y)), mul.apply(null, new Array(j).fill(x)), image));
+  const m = (i, j) => mom(i, j, y, x);
   moments.m00 = m(0, 0); // area or sum of grey level
   moments.m01 = m(0, 1);
   moments.m10 = m(1, 0);
@@ -43,8 +45,7 @@ export default function imageMoments(image) {
   // Central moments
   // @desc translation invariant
   // @url https://en.wikipedia.org/wiki/Image_moment#Central_moments
-  const mu = (i, j) =>
-    sum(mul(mul.apply(null, new Array(i).fill(yMoments)), mul.apply(null, new Array(j).fill(xMoments)), image));
+  const mu = (i, j) => mom(i, j, yMoments, xMoments);
   moments.mu00 = moments.m00;
   moments.mu01 = 0; // sum((yMoments)*image) // should be 0
   moments.mu10 = 0; // sum((xMoments)*image) // should be 0
