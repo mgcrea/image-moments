@@ -8,6 +8,7 @@
     "test": "cross-env NODE_ENV=test mocha --compilers js:babel-register --recursive",
     "test:watch": "npm run test -- --watch",
     "test-coverage": "cross-env NODE_ENV=test nyc --reporter=lcov npm test -- --reporter dot && nyc report",
+    "lint": "eslint src/",
     "compile": "babel src/ -d lib/ -s",
     "compile:watch": "npm run compile -- -w",
     "prepublish": "npm run compile"
