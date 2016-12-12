@@ -4,16 +4,14 @@ const mgrid = (h, w) => {
   return [y, x];
 };
 
-const pow = ::Math.pow;
-
 const sum = m =>
   m.reduce((s, v) => s + v.reduce((_s, w) => _s + w, 0), 0);
 
-const _mul = (m1, m2) =>
+const multwo = (m1, m2) =>
   m1.slice().map((v, y) => v.slice().map((w, x) => w * m2[y][x]));
 
 const mul = (...matrices) =>
-  (matrices.length ? matrices.filter(Boolean).reduce((s, m) => _mul(s, m)) : null);
+  (matrices.length ? matrices.filter(Boolean).reduce((s, m) => multwo(s, m)) : null);
 
 const dev = (m, mean) =>
   m.slice().map((v, y) => v.slice().map((w, x) => w - mean));
@@ -26,7 +24,7 @@ export default function imageMoments(image) {
   const moments = {};
 
   const mom = (i, j, fy, fx) =>
-    sum(mul(mul.apply(null, new Array(i).fill(fy)), mul.apply(null, new Array(j).fill(fx)), image));
+    sum(mul(mul(...new Array(i).fill(fy)), mul(...new Array(j).fill(fx)), image));
 
   // Raw or spatial moments
   const m = (i, j) => mom(i, j, y, x);
@@ -65,7 +63,7 @@ export default function imageMoments(image) {
   // Scale invariants
   // @desc translation and scale invariant
   const nu = (i, j) =>
-    moments[`mu${i}${j}`] / pow(moments.mu00, (1 + (i + j) / 2));
+    moments[`mu${i}${j}`] / (moments.mu00 ** (1 + ((i + j) / 2)));
   moments.nu11 = nu(1, 1);
   moments.nu12 = nu(1, 2);
   moments.nu21 = nu(2, 1);
@@ -78,23 +76,27 @@ export default function imageMoments(image) {
   // @desc translation, scale and rotation invariant
   const {nu11, nu12, nu21, nu02, nu20, nu03, nu30} = moments;
   moments.hu1 = moments.nu20 + moments.nu02;
-  moments.hu2 = pow(nu20 + nu02, 2) + 4 * pow(nu11, 2);
-  moments.hu3 = pow(nu30 - 3 * nu12, 2) + pow(3 * nu21 - nu03, 2);
-  moments.hu4 = pow(nu30 + nu12, 2) + pow(nu21 - nu03, 2);
-  moments.hu5 = (nu30 - 3 * nu12) * (nu30 + nu12) * (pow(nu30 + nu12, 2) - 3 * pow(nu21 + nu03, 2)) + (3 * nu21 - nu03) * (nu21 + nu03) * (3 * pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2));
-  moments.hu6 = (nu20 - nu02) * (pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2)) + 4 * nu11 * (nu30 + nu12) * (nu21 + nu03);
-  moments.hu7 = (3 * nu21 - nu03) * (nu30 + nu12) * (pow(nu30 + nu12, 2) - 3 * pow(nu21 + nu03, 2)) - (nu30 - 3 * nu12) * (nu21 + nu03) * (3 * pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2));
-  moments.hu8 = nu11 * (pow(nu30 + nu12, 2) - pow(nu21 + nu03, 2)) - (nu20 - nu02) * (nu30 + nu12) * (nu03 + nu21);
+  moments.hu2 = ((nu20 + nu02) ** 2) + (4 * (nu11 ** 2));
+  moments.hu3 = ((nu30 - (3 * nu12)) ** 2) + (((3 * nu21) - nu03) ** 2);
+  moments.hu4 = ((nu30 + nu12) ** 2) + ((nu21 - nu03) ** 2);
+  moments.hu5 = (((nu30 - (3 * nu12)) * (nu30 + nu12) * ((nu30 + nu12) ** 2)) - (3 * ((nu21 + nu03) ** 2)))
+              + ((((3 * nu21) - nu03) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
+  moments.hu6 = ((nu20 - nu02) * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
+              + (4 * nu11 * (nu30 + nu12) * (nu21 + nu03));
+  moments.hu7 = ((((3 * nu21) - nu03) * (nu30 + nu12) * (((nu30 + nu12) ** 2))) - (3 * ((nu21 + nu03) ** 2)))
+              - (((nu30 - (3 * nu12)) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
+  moments.hu8 = (nu11 * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
+              - ((nu20 - nu02) * (nu30 + nu12) * (nu03 + nu21));
 
   return moments;
 }
 
-const getOrientationFromMoments = moments => {
+const getOrientationFromMoments = (moments) => {
   const {mu00, mu11, mu02, mu20} = moments;
   const dmu20 = mu20 / mu00;
   const dmu02 = mu02 / mu00;
   const dmu11 = mu11 / mu00;
-  return dmu20 !== dmu02 ? Math.atan(2 * dmu11 / (dmu20 - dmu02)) / 2 : 0;
+  return dmu20 !== dmu02 ? Math.atan((2 * dmu11) / (dmu20 - dmu02)) / 2 : 0;
 };
 
 export {getOrientationFromMoments};

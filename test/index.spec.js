@@ -24,7 +24,7 @@ describe('imageMoment', () => {
   it('should properly compute raw moments', () => {
     expect(moments).toBeA('object');
     const rawMomentKeys = ['m00', 'm01', 'm10', 'm11', 'm02', 'm20', 'm12', 'm21', 'm03', 'm30'];
-    rawMomentKeys.forEach(key => {
+    rawMomentKeys.forEach((key) => {
       if (expected[key]) {
         expect(moments[key]).toEqual(expected[key]);
       }
@@ -35,7 +35,7 @@ describe('imageMoment', () => {
     expect(moments).toBeA('object');
     const k = Object.keys(expected); k.sort();
     const rawMomentKeys = ['mu00', 'mu01', 'mu10', 'mu11', 'mu20', 'mu02', 'mu21', 'mu12', 'mu30', 'mu03'];
-    rawMomentKeys.forEach(key => {
+    rawMomentKeys.forEach((key) => {
       if (expected[key]) {
         expect(moments[key]).toApproximate(expected[key], 10e5);
       }
@@ -45,7 +45,7 @@ describe('imageMoment', () => {
   it('should properly compute scale moments', () => {
     expect(moments).toBeA('object');
     const rawMomentKeys = ['nu11', 'nu12', 'nu21', 'nu20', 'nu03', 'nu30'];
-    rawMomentKeys.forEach(key => {
+    rawMomentKeys.forEach((key) => {
       if (expected[key]) {
         expect(moments[key]).toApproximate(expected[key], 10e15);
       }
@@ -56,9 +56,9 @@ describe('imageMoment', () => {
     expect(moments).toBeA('object');
     const rawMomentKeys = ['hu1', 'hu2', 'hu3', 'hu4', 'hu5', 'hu6', 'hu7'];
     let i = 0;
-    rawMomentKeys.forEach(key => {
+    rawMomentKeys.forEach((key) => {
       expect(moments[key]).toApproximate(expectedHu[i][0], 10e5);
-      i++;
+      i += 1;
     });
   });
 
