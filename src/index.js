@@ -20,7 +20,7 @@ const dev = (m, mean) =>
 export default function imageMoments(image) {
   // Expects a greyscale image matrix [y][x]
   // @desc https://en.wikipedia.org/wiki/Image_moment
-  const [y, x] = mgrid(25, 20);
+  const [y, x] = mgrid(image.length, image[0].length);
   const moments = {};
 
   const mom = (i, j, fy, fx) =>
