@@ -16,6 +16,22 @@ const mul = (...matrices) =>
 const dev = (m, mean) =>
   m.slice().map((v, y) => v.slice().map((w, x) => w - mean));
 
+export const getHuMoments = ({nu11, nu12, nu21, nu02, nu20, nu03, nu30}) => {
+  const moments = {};
+  moments.hu1 = nu20 + nu02;
+  moments.hu2 = ((nu20 + nu02) ** 2) + (4 * (nu11 ** 2));
+  moments.hu3 = ((nu30 - (3 * nu12)) ** 2) + (((3 * nu21) - nu03) ** 2);
+  moments.hu4 = ((nu30 + nu12) ** 2) + ((nu21 - nu03) ** 2);
+  moments.hu5 = (((nu30 - (3 * nu12)) * (nu30 + nu12) * ((nu30 + nu12) ** 2)) - (3 * ((nu21 + nu03) ** 2)))
+              + ((((3 * nu21) - nu03) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
+  moments.hu6 = ((nu20 - nu02) * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
+              + (4 * nu11 * (nu30 + nu12) * (nu21 + nu03));
+  moments.hu7 = ((((3 * nu21) - nu03) * (nu30 + nu12) * (((nu30 + nu12) ** 2))) - (3 * ((nu21 + nu03) ** 2)))
+              - (((nu30 - (3 * nu12)) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
+  moments.hu8 = (nu11 * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
+              - ((nu20 - nu02) * (nu30 + nu12) * (nu03 + nu21));
+  return moments;
+};
 
 export default function imageMoments(image) {
   // Expects a greyscale image matrix [y][x]
@@ -74,29 +90,15 @@ export default function imageMoments(image) {
 
   // Rotation invariants
   // @desc translation, scale and rotation invariant
-  const {nu11, nu12, nu21, nu02, nu20, nu03, nu30} = moments;
-  moments.hu1 = moments.nu20 + moments.nu02;
-  moments.hu2 = ((nu20 + nu02) ** 2) + (4 * (nu11 ** 2));
-  moments.hu3 = ((nu30 - (3 * nu12)) ** 2) + (((3 * nu21) - nu03) ** 2);
-  moments.hu4 = ((nu30 + nu12) ** 2) + ((nu21 - nu03) ** 2);
-  moments.hu5 = (((nu30 - (3 * nu12)) * (nu30 + nu12) * ((nu30 + nu12) ** 2)) - (3 * ((nu21 + nu03) ** 2)))
-              + ((((3 * nu21) - nu03) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
-  moments.hu6 = ((nu20 - nu02) * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
-              + (4 * nu11 * (nu30 + nu12) * (nu21 + nu03));
-  moments.hu7 = ((((3 * nu21) - nu03) * (nu30 + nu12) * (((nu30 + nu12) ** 2))) - (3 * ((nu21 + nu03) ** 2)))
-              - (((nu30 - (3 * nu12)) * (nu21 + nu03) * (3 * ((nu30 + nu12) ** 2))) - ((nu21 + nu03) ** 2));
-  moments.hu8 = (nu11 * (((nu30 + nu12) ** 2) - ((nu21 + nu03) ** 2)))
-              - ((nu20 - nu02) * (nu30 + nu12) * (nu03 + nu21));
+  Object.assign(moments, getHuMoments(moments));
 
   return moments;
 }
 
-const getOrientationFromMoments = (moments) => {
+export const getOrientationFromMoments = (moments) => {
   const {mu00, mu11, mu02, mu20} = moments;
   const dmu20 = mu20 / mu00;
   const dmu02 = mu02 / mu00;
   const dmu11 = mu11 / mu00;
   return dmu20 !== dmu02 ? Math.atan((2 * dmu11) / (dmu20 - dmu02)) / 2 : 0;
 };
-
-export {getOrientationFromMoments};
