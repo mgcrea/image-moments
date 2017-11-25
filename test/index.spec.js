@@ -4,13 +4,17 @@ import expect from 'expect';
 import imageMoments, {getOrientationFromMoments} from './../src';
 
 expect.extend({
-  toApproximate(expected, precision = 10e3) {
-    expect.assert(
-      Math.floor(this.actual * precision) === Math.floor(expected * precision),
-      `expected %s to approximate ${expected}`,
-      this.actual, expected
-    );
-    return this;
+  toApproximate(received, expected, precision = 10e3) {
+    return {
+      message: () => `expected ${received} to approximate ${expected} with precision ${precision}`,
+      pass: Math.floor(received * precision) === Math.floor(expected * precision)
+    };
+  },
+  toBeA(received, expectedType) {
+    return {
+      message: () => `expected type ${typeof received} to equal ${expectedType}`,
+      pass: typeof received === expectedType // eslint-disable-line valid-typeof
+    };
   }
 });
 

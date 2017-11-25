@@ -1,12 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-  - "4"
+  - "6"
   - "stable"
 
 env:
   global:
-    - CODE_CLIMATE_TOKEN=adf61bec7a4ee3049088a96c0591431382f9fb3f70b984a65c5360de96ad6f92
+    - CODACY_PROJECT_TOKEN=b210336eb9f74da29c08b52c6df2a30a
 
 before_script:
   - date --rfc-2822
@@ -17,8 +17,4 @@ script:
   - npm run test:coverage
 
 after_script:
-  - cat coverage/lcov.info | codeclimate-test-reporter
-
-addons:
-  code_climate:
-    repo_token: adf61bec7a4ee3049088a96c0591431382f9fb3f70b984a65c5360de96ad6f92
+  - cat coverage/lcov.info | codacy-coverage
